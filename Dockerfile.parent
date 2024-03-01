@@ -1,0 +1,17 @@
+FROM registry.access.redhat.com/ubi8/ubi:8.0
+
+MAINTAINER Rohit Taneja
+
+ENV DOCROOT=/var/www/html
+
+RUN dnf install -y --disableplugin=subscription-manager httpd && dnf clean all --disableplugin=subscription-manager -y && echo "Hello From the httpd-parent container!" > ${DOCROOT}/index.html
+
+ONBUILD COPY src/ ${DOCROOT}/
+
+EXPOSE 80
+
+RUN rm -rf /run/httpd && mkdir /run/httpd
+
+USER root
+
+CMD /usr/sbin/httpd -DFOREGROUND
